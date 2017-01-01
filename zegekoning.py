@@ -21,7 +21,7 @@ def count_wins(year, club):
     winners = Counter()
     for race in find_races(year):
         results = load_race(race)
-        for _, category in results["categories"].items():
+        for category in results["categories"].values():
             for runner in category["results"]:
                 if runner["position"] == "1" and (club is None or club in runner["club"].lower()):
                     winners[runner["name"]] += 1

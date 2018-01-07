@@ -15,12 +15,18 @@ def find_races(year):
     return [int(laufId) for laufId in re.findall('index.php\\?lauf=(\d+)', data)]
 
 def load_race(id):
-    return s.get("http://helga-o.com/webres/ws.php", params={"lauf": id}).json()
+    try:
+        return s.get("http://helga-o.com/webres/ws.php", params={"lauf": id}).json()
+    except:
+        print("Failed to load %s"%(id), file=sys.stderr)
+        return None
 
 def count_wins(year, club):
     winners = Counter()
     for race in find_races(year):
         results = load_race(race)
+        if results is None:
+            continue
         for category in results["categories"].values():
             for runner in category["results"]:
                 if runner["position"] == "1" and (club is None or club in runner["club"].lower()):
